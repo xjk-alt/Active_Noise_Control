@@ -1,6 +1,8 @@
 #pragma once
 #include <ct/core/core.h> // as usual, include CT
+#include <TrajectoryLogger.h>
 // create a class that derives from ct::core::System
+
 class AncModel : public ct::core::ControlledSystem<2, 1>
 {
 public:
@@ -10,8 +12,12 @@ public:
     const static int CONTROL_DIM = 1;
     const static int MEASURE_DIM = 1;
 
+    typedef ct::core::StateVector<STATE_DIM> state_t;
+    typedef ct::core::ControlVector<CONTROL_DIM> control_t;
+    typedef ct::core::OutputVector<MEASURE_DIM> output_t;
+
     // constructor
-    AncModel(const ct::core::StateVector<STATE_DIM> &init_state)
+    AncModel(const state_t &init_state)
     {
         A_ << 0, 1,
             -3.098 * 1e4, -62.342;
@@ -21,6 +27,7 @@ public:
     }
     // copy constructor
     AncModel(const AncModel &other) : A_(other.A_), B_(other.B_), C_(other.C_) {}
+
     AncModel *clone() const override
     {
         return new AncModel(*this); // calls copy constructor
@@ -28,21 +35,21 @@ public:
     // destructor
     ~AncModel() = default;
     // The system dynamics. We override this method which gets called by e.g. the Integrator
-    void computeControlledDynamics(const ct::core::StateVector<STATE_DIM> &state,
+    void computeControlledDynamics(const state_t &state,
                                    const time_t &t,
-                                   const ct::core::ControlVector<CONTROL_DIM> &control,
-                                   ct::core::StateVector<STATE_DIM> &derivative) override
+                                   const control_t &control,
+                                   state_t &derivative) override
     {
         derivative = A_ * state + B_ * control;
     }
 
-    void computeMeasurements(const ct::core::StateVector<STATE_DIM> &state,
-                             ct::core::StateVector<MEASURE_DIM> &measure) const
+    void computeOutput(const state_t &state,
+                       output_t &measure) const
     {
         measure = C_.transpose() * state;
     }
 
-    ct::core::StateVector<STATE_DIM> getInitState() const
+    state_t getInitState() const
     {
         return init_state_;
     }
