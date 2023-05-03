@@ -5,7 +5,6 @@
 #include <ct/core/core.h>
 #include <ct/optcon/optcon.h>
 #include "AncModel.h"
-#include "BlankController.h"
 #include "utils/utils.hpp"
 #include <msgpack.hpp>
 #include <vector>
@@ -36,6 +35,7 @@ int main(int argc, char **argv)
     ct::core::StateVector<state_dim> x;
     ct::core::OutputVector<measure_dim> y;
     ct::core::ControlVector<control_dim> u;
+    u << 1.0;
     // we initialize it at a point with unit deflection and zero velocity
     x(0) = 0.0;
     x(1) = 0.0;
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
     double kd = 1;
     ct::core::ControlVector<control_dim> uff;
     uff << 2.0;
-    std::shared_ptr<BlankController> controller(new BlankController());
+    std::shared_ptr<ct::core::ConstantController<state_dim, control_dim>> controller(new ct::core::ConstantController<state_dim, control_dim>(u));
     // assign our controller
     model->setController(controller);
     // create an integrator
