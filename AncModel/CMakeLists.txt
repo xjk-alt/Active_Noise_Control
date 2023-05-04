@@ -16,7 +16,11 @@ list(APPEND CMAKE_PREFIX_PATH "/opt")
 find_package(blasfeo REQUIRED)
 find_package(hpipm REQUIRED)
 
-add_executable(AncModelSim AncModelSim.cpp)
-target_include_directories(AncModelSim PUBLIC ${PROJECT_INCLUDE_DIRS})
-target_link_libraries(AncModelSim ct_optcon)
+add_executable(AncModelStepResponse AncModelStepResponse.cpp)
+target_include_directories(AncModelStepResponse PUBLIC ${PROJECT_INCLUDE_DIRS})
+target_link_libraries(AncModelStepResponse ct_optcon)
+
+add_executable(AncModelFrequencyResponse AncModelFrequencyResponse.cpp)
+target_include_directories(AncModelFrequencyResponse PUBLIC ${PROJECT_INCLUDE_DIRS})
+target_link_libraries(AncModelFrequencyResponse ct_optcon)
 

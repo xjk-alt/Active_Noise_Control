@@ -46,7 +46,7 @@ public:
     void computeOutput(const state_t &state,
                        output_t &measure) const
     {
-        measure = C_.transpose() * state;
+        measure = C_ * state;
     }
 
     state_t getInitState() const
@@ -55,8 +55,11 @@ public:
     }
 
 private:
-    Eigen::Matrix<double, STATE_DIM, STATE_DIM> A_;
-    Eigen::Matrix<double, STATE_DIM, CONTROL_DIM> B_;
-    Eigen::Matrix<double, STATE_DIM, MEASURE_DIM> C_;
+    ct::core::StateMatrix<STATE_DIM> A_;
+    ct::core::StateControlMatrix<STATE_DIM, CONTROL_DIM> B_;
+    ct::core::OutputStateMatrix<MEASURE_DIM, STATE_DIM> C_;
+    // Eigen::Matrix<double, STATE_DIM, STATE_DIM> A_;
+    // Eigen::Matrix<double, STATE_DIM, CONTROL_DIM> B_;
+    // Eigen::Matrix<double, STATE_DIM, MEASURE_DIM> C_;
     ct::core::StateVector<STATE_DIM> init_state_;
 };

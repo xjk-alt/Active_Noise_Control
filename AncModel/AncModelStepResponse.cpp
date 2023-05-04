@@ -23,7 +23,7 @@ typedef struct
 
 int main(int argc, char **argv)
 {
-    std::ofstream stream("output.bin", std::ios::binary);
+    std::ofstream stream("../../data/AncModelStepResponse.bin", std::ios::binary);
     msgpack::packer<std::ofstream> packer(stream);
     datapack_t data;
 
