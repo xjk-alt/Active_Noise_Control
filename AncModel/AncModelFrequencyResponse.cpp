@@ -73,7 +73,7 @@ int main(int argc, char **argv)
     x(0) = 0.0;
     x(1) = 0.0;
 
-    std::shared_ptr<AncModel> model(new AncModel(x));
+    std::shared_ptr<ct::core::AncModel> model(new ct::core::AncModel(x));
     // create our controller
     double kp = 10;
     double kd = 1;
@@ -102,7 +102,7 @@ int main(int argc, char **argv)
         data.x0.push_back(x(0));
         data.x1.push_back(x(1));
 
-        model->computeOutput(x, y);
+        y = model->computeOutput(x, t0);
         data.y.push_back(y(0));
 
         controller->computeControl(x, t0, u);

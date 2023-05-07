@@ -8,6 +8,7 @@
 #include "utils/utils.hpp"
 #include <msgpack.hpp>
 #include <vector>
+#include <TransferFunc.h>
 
 typedef std::vector<double> array_t;
 
@@ -22,10 +23,11 @@ typedef struct
 } datapack_t;
 
 using AncModel = ct::core::AncModel;
+using TF2 = ct::core::TransferFunc<2>;
 
 int main(int argc, char **argv)
 {
-    std::ofstream stream("../../data/AncModelStepResponse.bin", std::ios::binary);
+    std::ofstream stream("../../data/AncTFStepResponse.bin", std::ios::binary);
     msgpack::packer<std::ofstream> packer(stream);
     datapack_t data;
 
@@ -42,7 +44,11 @@ int main(int argc, char **argv)
     x(0) = 0.0;
     x(1) = 0.0;
 
-    std::shared_ptr<AncModel> model(new AncModel(x));
+    Eigen::Vector3d N, D;
+    N << 0, -55.306, -2.638*1e4;
+    D << 1, 62.342, 3.098*1e4;
+
+    std::shared_ptr<TF2> model(new TF2(N, D, x));
     // create our controller
     double kp = 10;
     double kd = 1;
@@ -78,6 +84,19 @@ int main(int argc, char **argv)
 
     packer.pack(data);
     stream.close();
+
+    Eigen::Matrix<double, 2, 2> a;
+    Eigen::Matrix<double, 2, 1> b;
+    Eigen::Matrix<double, 1, 2> c;
+
+    model->getSystemMatrices(a, b, c);
+    std::cout << a << std::endl
+              << std::endl;
+    std::cout << b << std::endl
+              << std::endl;
+    std::cout << c << std::endl
+              << std::endl;
+
 
     return 0;
 }

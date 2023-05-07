@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14.0)
 
 project(AncModelSim)
 
-set(PROJECT_INCLUDE_DIRS ../ ../Controller/ ../logger/)
+set(PROJECT_INCLUDE_DIRS ../ ../Controller/ ../logger/ ../src)
 
 find_package(Eigen3 REQUIRED)
 find_package(msgpack REQUIRED)
@@ -24,3 +24,6 @@ add_executable(AncModelFrequencyResponse AncModelFrequencyResponse.cpp)
 target_include_directories(AncModelFrequencyResponse PUBLIC ${PROJECT_INCLUDE_DIRS})
 target_link_libraries(AncModelFrequencyResponse ct_optcon)
 
+add_executable(AncTFStepResponse AncTFStepResponse.cpp)
+target_include_directories(AncTFStepResponse PUBLIC ${PROJECT_INCLUDE_DIRS})
+target_link_libraries(AncTFStepResponse ct_optcon)
