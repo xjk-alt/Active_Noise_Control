@@ -32,5 +32,17 @@ namespace ct
             TransferFunc(const TransferFunc &other) : Base(other) {}
         };
 
+        class SecondOrderOscillator : public TransferFunc<2>
+        {
+        public:
+            EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+            using Base = TransferFunc<2>;
+            MAKE_TIME_STATE_CONTROL_OUTPUT_TYPE_FROM_BASE
+
+            SecondOrderOscillator(double w, const state_t &initState = state_t()) : Base((Eigen::Vector3d() << 0.0, 0.0, 1.0).finished(), (Eigen::Vector3d() << 1, 0, w * w).finished(), initState) {}
+
+            SecondOrderOscillator(const SecondOrderOscillator &other) : Base(other) {}
+        };
     }
 }

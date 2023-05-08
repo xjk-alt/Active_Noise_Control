@@ -14,7 +14,12 @@ namespace ct
             using Base = ControlOutputSystem<STATE_DIM, CONTROL_DIM, OUTPUT_DIM>;
             MAKE_TIME_STATE_CONTROL_OUTPUT_TYPE_FROM_BASE
 
-            StateSpace(const state_t &initState = state_t()) : Base(initState) {}
+            StateSpace(const state_t &initState = state_t()) : Base(initState)
+            {
+                A_.setZero();
+                B_.setZero();
+                C_.setZero();
+            }
 
             // constructor
             StateSpace(const StateMatrix<STATE_DIM> &A,

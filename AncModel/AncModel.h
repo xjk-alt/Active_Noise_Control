@@ -25,6 +25,11 @@ namespace ct
             }
             // copy constructor
             AncModel(const AncModel &other) : Base(other) {}
+
+            AncModel *clone() const override
+            {
+                return new AncModel(*this); // calls copy constructor
+            }
         };
 
     }
