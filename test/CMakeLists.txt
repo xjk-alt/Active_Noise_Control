@@ -1,29 +1,20 @@
-cmake_minimum_required(VERSION 3.14.0)
+cmake_minimum_required(VERSION 3.3)
+
+set(PROJECT_ROOT_DIR ../)
 
 project(ancTest)
 set(CMAKE_BUILD_TYPE Debug)
-set(PROJECT_INCLUDE_DIRS ../ ../Controller/ ../src ../AncModel)
+set(PROJECT_INCLUDE_DIRS ${PROJECT_ROOT_DIR} ${PROJECT_ROOT_DIR}/Controller/ ${PROJECT_ROOT_DIR}/src ${PROJECT_ROOT_DIR}/AncModel ${PROJECT_ROOT_DIR}/libs ${PROJECT_ROOT_DIR}/libs/Eigen ${PROJECT_ROOT_DIR}/libs/control-toolbox/ct_core/include)
+set(LIBS_SRC ${PROJECT_ROOT_DIR}/libs/control-toolbox/ct_core/src/core/plot/plot.cpp)
 
-find_package(Eigen3 REQUIRED)
-find_package(msgpack REQUIRED)
+# find_package(Eigen3 REQUIRED)
+# find_package(msgpack REQUIRED)
 
-find_package(ct_core REQUIRED)
-find_package(ct_rbd REQUIRED)
-find_package(ct_optcon REQUIRED)
-find_package(ct_models REQUIRED)
-
-list(APPEND CMAKE_PREFIX_PATH "/opt")
-find_package(blasfeo REQUIRED)
-find_package(hpipm REQUIRED)
-
-add_executable(tfTest tfTest.cpp)
+add_executable(tfTest tfTest.cpp ${LIBS_SRC})
 target_include_directories(tfTest PUBLIC ${PROJECT_INCLUDE_DIRS})
-target_link_libraries(tfTest ct_optcon)
 
-add_executable(exosysTest OscillatorTest.cpp)
+add_executable(exosysTest OscillatorTest.cpp ${LIBS_SRC})
 target_include_directories(exosysTest PUBLIC ${PROJECT_INCLUDE_DIRS})
-target_link_libraries(exosysTest ct_optcon)
 
-add_executable(mtTest MTControllerTest.cpp)
+add_executable(mtTest MTControllerTest.cpp ${LIBS_SRC})
 target_include_directories(mtTest PUBLIC ${PROJECT_INCLUDE_DIRS})
-target_link_libraries(mtTest ct_optcon)

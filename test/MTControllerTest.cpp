@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <ct/core/core.h>
-#include <ct/optcon/optcon.h>
 #include <msgpack.hpp>
 
 #include "TransferFunc.h"

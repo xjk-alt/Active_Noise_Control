@@ -1,7 +1,7 @@
 rm -rf libs && mkdir libs && cd libs
 
 #C/C++/python3
-sudo apt install -y build-essential python3 python-is-python3 libpython3-dev python3-pip 
+sudo apt install -y git build-essential python3 python-is-python3 libpython3-dev python3-pip 
 
 #cmake
 sudo apt install -y gpg wget
