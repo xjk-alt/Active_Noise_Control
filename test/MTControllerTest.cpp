@@ -10,6 +10,7 @@
 #include "TransferFunc.h"
 #include "MTController.h"
 #include "ControlOutputSystem.h"
+#include "SystemWrapper.h"
 
 typedef std::vector<double> array_t;
 
@@ -19,8 +20,9 @@ typedef struct
     MSGPACK_DEFINE_MAP(t, x0, x1, w0, w1, d, y, u);
 } datapack_t;
 
+using AncWrapper = ct::core::SystemWrapper<2, 1, 1>;
 using TF2 = ct::core::TransferFunc<2>;
-using CloseLoopSys_ = ct::core::ControlOutputSystem<6, 0, 6>;
+using CloseLoopSys_ = ct::core::ControlOutputSystem<4, 0, 4>;
 using Oscillator2 = ct::core::SecondOrderOscillator;
 using ct::core::MTController;
 using Eigen::Vector2d;
@@ -34,7 +36,7 @@ public:
     using Base = CloseLoopSys_;
     MAKE_TIME_STATE_CONTROL_OUTPUT_TYPE_FROM_BASE
 
-    CloseLoopSys(const TF2 &plant, const MTController &controller, const Oscillator2 &exosys) : plant_(plant), controller_(controller), exosys_(exosys)
+    CloseLoopSys(const AncWrapper &plant, const MTController &controller, const Oscillator2 &exosys) : plant_(plant), controller_(controller), exosys_(exosys)
     {
         initState_ << plant_.getInitState(), controller_.getInitState(), exosys.getInitState();
     };
@@ -52,11 +54,11 @@ public:
                                    state_t &derivative) override
     {
         TF2::state_t plant_state, plant_derivative;
-        plant_state << state.segment(0, 2);
+        // plant_state << state.segment(0, 2);
         MTController::state_t controller_state, controller_derivative;
-        controller_state << state.segment(2, 2);
+        controller_state << state.segment(0, 2);
         Oscillator2::state_t exosys_state, exosys_derivative;
-        exosys_state << state.segment(4, 2);
+        exosys_state << state.segment(2, 2);
 
         exosys_.computeDynamics(exosys_state, t, exosys_derivative);
 
@@ -64,13 +66,14 @@ public:
 
         plant_.computeControlledDynamics(plant_state, t, controller_.computeOutput(controller_state) - exosys_.computeOutput(exosys_state), plant_derivative);
 
-        derivative << plant_derivative, controller_derivative, exosys_derivative;
+        derivative << controller_derivative, exosys_derivative;
+        // derivative << plant_derivative, controller_derivative, exosys_derivative;
     }
 
     output_t computeOutput(const state_t &state, const time_t &t) { return state; }
 
     // protected:
-    TF2 plant_;
+    AncWrapper plant_;
     MTController controller_;
     Oscillator2 exosys_;
 };
@@ -93,7 +96,9 @@ int main(int argc, char **argv)
 
     TF2 plant((Vector3d() << 0, 2, -2).finished(), (Vector3d() << 1, 2, 3).finished(), x0);
 
-    std::shared_ptr<CloseLoopSys> model(new CloseLoopSys(plant, controller, oscillator));
+    AncWrapper wrapper;
+
+    std::shared_ptr<CloseLoopSys> model(new CloseLoopSys(wrapper, controller, oscillator));
 
     ct::core::Integrator<6> integrator(model, ct::core::IntegrationType::RK4);
     // simulate 1000 steps
